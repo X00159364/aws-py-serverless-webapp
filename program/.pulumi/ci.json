@@ -1,3 +1,4 @@
 {
     "main": "dev",
+    "test": "dev",
 }
