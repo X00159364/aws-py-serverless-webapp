@@ -1,0 +1,8 @@
+name: aws-py-serverless-webapp
+description: A Pulumi program that demonstrates creating various AWS resources in PYthon
+runtime: python
+template:
+  config:
+    aws:region:
+      description: The AWS region to deploy into
+      aws:region: eu-west-1

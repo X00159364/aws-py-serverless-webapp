@@ -1,0 +1,263 @@
+{
+    "version": 3,
+    "deployment": {
+        "manifest": {
+            "time": "2020-10-29T20:12:38.8796335Z",
+            "magic": "edb82401dc4d5dc5fdd86767ab7f427143cf70891d9ac40673af9ae34b9022ce",
+            "version": "v2.12.1"
+        },
+        "secrets_providers": {
+            "type": "service",
+            "state": {
+                "url": "https://api.pulumi.com",
+                "owner": "noellowry",
+                "project": "aws-py-serverless-webapp",
+                "stack": "dev"
+            }
+        },
+        "resources": [
+            {
+                "urn": "urn:pulumi:dev::aws-py-serverless-webapp::pulumi:pulumi:Stack::aws-py-serverless-webapp-dev",
+                "custom": false,
+                "type": "pulumi:pulumi:Stack",
+                "outputs": {
+                    "bucket_name": "serverless-app-bucket-d600965",
+                    "dynamodb_table.arn": "arn:aws:dynamodb:eu-west-1:592715633892:table/serverless-webapp-db-318783b",
+                    "dynamodb_table.name": "serverless-webapp-db-318783b",
+                    "serverless_webapp_api.execution_arn": "arn:aws:execute-api:eu-west-1:592715633892:ei7ijl0z3h",
+                    "website_url": "serverless-app-bucket-d600965.s3-website-eu-west-1.amazonaws.com"
+                }
+            },
+            {
+                "urn": "urn:pulumi:dev::aws-py-serverless-webapp::pulumi:providers:aws::default_3_10_1",
+                "custom": true,
+                "id": "9345827c-1b17-485d-ba33-7d754c81ac33",
+                "type": "pulumi:providers:aws",
+                "inputs": {
+                    "region": "eu-west-1",
+                    "version": "3.10.1"
+                },
+                "outputs": {
+                    "region": "eu-west-1",
+                    "version": "3.10.1"
+                }
+            },
+            {
+                "urn": "urn:pulumi:dev::aws-py-serverless-webapp::aws:apigateway/restApi:RestApi::serverless_webapp_API",
+                "custom": true,
+                "id": "ei7ijl0z3h",
+                "type": "aws:apigateway/restApi:RestApi",
+                "inputs": {
+                    "__defaults": [
+                        "apiKeySource",
+                        "minimumCompressionSize",
+                        "name"
+                    ],
+                    "apiKeySource": "HEADER",
+                    "description": "This is my API for demonstration purposes",
+                    "endpointConfiguration": {
+                        "__defaults": [],
+                        "types": "REGIONAL"
+                    },
+                    "minimumCompressionSize": -1,
+                    "name": "serverless_webapp_API-c6aa1f0"
+                },
+                "outputs": {
+                    "apiKeySource": "HEADER",
+                    "arn": "arn:aws:apigateway:eu-west-1::/restapis/ei7ijl0z3h",
+                    "binaryMediaTypes": [],
+                    "createdDate": "2020-10-29T19:57:35Z",
+                    "description": "This is my API for demonstration purposes",
+                    "endpointConfiguration": {
+                        "types": "REGIONAL",
+                        "vpcEndpointIds": []
+                    },
+                    "executionArn": "arn:aws:execute-api:eu-west-1:592715633892:ei7ijl0z3h",
+                    "id": "ei7ijl0z3h",
+                    "minimumCompressionSize": -1,
+                    "name": "serverless_webapp_API-c6aa1f0",
+                    "policy": "",
+                    "rootResourceId": "g6h9tske6h",
+                    "tags": {}
+                },
+                "parent": "urn:pulumi:dev::aws-py-serverless-webapp::pulumi:pulumi:Stack::aws-py-serverless-webapp-dev",
+                "provider": "urn:pulumi:dev::aws-py-serverless-webapp::pulumi:providers:aws::default_3_10_1::9345827c-1b17-485d-ba33-7d754c81ac33",
+                "propertyDependencies": {
+                    "description": null,
+                    "endpointConfiguration": null
+                }
+            },
+            {
+                "urn": "urn:pulumi:dev::aws-py-serverless-webapp::aws:iam/role:Role::lambdaRole",
+                "custom": true,
+                "id": "lambdaRole-cf77b94",
+                "type": "aws:iam/role:Role",
+                "inputs": {
+                    "__defaults": [
+                        "forceDetachPolicies",
+                        "maxSessionDuration",
+                        "name",
+                        "path"
+                    ],
+                    "assumeRolePolicy": "{\n        \"Version\": \"2012-10-17\",\n        \"Statement\": [\n            {\n                \"Action\": \"sts:AssumeRole\",\n                \"Principal\": {\n                    \"Service\": \"lambda.amazonaws.com\"\n                },\n                \"Effect\": \"Allow\",\n                \"Sid\": \"\"\n            }\n        ]\n    }",
+                    "forceDetachPolicies": false,
+                    "maxSessionDuration": 3600,
+                    "name": "lambdaRole-cf77b94",
+                    "path": "/"
+                },
+                "outputs": {
+                    "arn": "arn:aws:iam::592715633892:role/lambdaRole-cf77b94",
+                    "assumeRolePolicy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Sid\":\"\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"lambda.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}",
+                    "createDate": "2020-10-29T19:57:36Z",
+                    "description": "",
+                    "forceDetachPolicies": false,
+                    "id": "lambdaRole-cf77b94",
+                    "maxSessionDuration": 3600,
+                    "name": "lambdaRole-cf77b94",
+                    "path": "/",
+                    "tags": {},
+                    "uniqueId": "AROAYUAE22TSLCMJ4IVSH"
+                },
+                "parent": "urn:pulumi:dev::aws-py-serverless-webapp::pulumi:pulumi:Stack::aws-py-serverless-webapp-dev",
+                "provider": "urn:pulumi:dev::aws-py-serverless-webapp::pulumi:providers:aws::default_3_10_1::9345827c-1b17-485d-ba33-7d754c81ac33",
+                "propertyDependencies": {
+                    "assumeRolePolicy": null
+                }
+            },
+            {
+                "urn": "urn:pulumi:dev::aws-py-serverless-webapp::aws:s3/bucket:Bucket::serverless-app-bucket",
+                "custom": true,
+                "id": "serverless-app-bucket-d600965",
+                "type": "aws:s3/bucket:Bucket",
+                "inputs": {
+                    "__defaults": [
+                        "acl",
+                        "bucket",
+                        "forceDestroy"
+                    ],
+                    "acl": "private",
+                    "bucket": "serverless-app-bucket-d600965",
+                    "forceDestroy": false,
+                    "website": {
+                        "__defaults": [],
+                        "indexDocument": "index.html"
+                    }
+                },
+                "outputs": {
+                    "accelerationStatus": "",
+                    "acl": "private",
+                    "arn": "arn:aws:s3:::serverless-app-bucket-d600965",
+                    "bucket": "serverless-app-bucket-d600965",
+                    "bucketDomainName": "serverless-app-bucket-d600965.s3.amazonaws.com",
+                    "bucketRegionalDomainName": "serverless-app-bucket-d600965.s3.eu-west-1.amazonaws.com",
+                    "corsRules": [],
+                    "forceDestroy": false,
+                    "grants": [],
+                    "hostedZoneId": "Z1BKCTXD74EZPE",
+                    "id": "serverless-app-bucket-d600965",
+                    "lifecycleRules": [],
+                    "loggings": [],
+                    "objectLockConfiguration": null,
+                    "region": "eu-west-1",
+                    "replicationConfiguration": null,
+                    "requestPayer": "BucketOwner",
+                    "serverSideEncryptionConfiguration": null,
+                    "tags": {},
+                    "versioning": {
+                        "enabled": false,
+                        "mfaDelete": false
+                    },
+                    "website": {
+                        "errorDocument": "",
+                        "indexDocument": "index.html",
+                        "redirectAllRequestsTo": "",
+                        "routingRules": ""
+                    },
+                    "websiteDomain": "s3-website-eu-west-1.amazonaws.com",
+                    "websiteEndpoint": "serverless-app-bucket-d600965.s3-website-eu-west-1.amazonaws.com"
+                },
+                "parent": "urn:pulumi:dev::aws-py-serverless-webapp::pulumi:pulumi:Stack::aws-py-serverless-webapp-dev",
+                "provider": "urn:pulumi:dev::aws-py-serverless-webapp::pulumi:providers:aws::default_3_10_1::9345827c-1b17-485d-ba33-7d754c81ac33",
+                "propertyDependencies": {
+                    "website": null
+                }
+            },
+            {
+                "urn": "urn:pulumi:dev::aws-py-serverless-webapp::aws:dynamodb/table:Table::serverless-webapp-db",
+                "custom": true,
+                "id": "serverless-webapp-db-318783b",
+                "type": "aws:dynamodb/table:Table",
+                "inputs": {
+                    "__defaults": [
+                        "name"
+                    ],
+                    "attributes": [
+                        {
+                            "__defaults": [],
+                            "name": "ID",
+                            "type": "S"
+                        },
+                        {
+                            "__defaults": [],
+                            "name": "LatestGreetingTime",
+                            "type": "S"
+                        }
+                    ],
+                    "billingMode": "PROVISIONED",
+                    "hashKey": "ID",
+                    "name": "serverless-webapp-db-318783b",
+                    "rangeKey": "LatestGreetingTime",
+                    "readCapacity": 20,
+                    "writeCapacity": 20
+                },
+                "outputs": {
+                    "__meta": "{\"e2bfb730-ecaa-11e6-8f88-34363bc7c4c0\":{\"create\":600000000000,\"delete\":600000000000,\"update\":3600000000000},\"schema_version\":\"1\"}",
+                    "arn": "arn:aws:dynamodb:eu-west-1:592715633892:table/serverless-webapp-db-318783b",
+                    "attributes": [
+                        {
+                            "name": "ID",
+                            "type": "S"
+                        },
+                        {
+                            "name": "LatestGreetingTime",
+                            "type": "S"
+                        }
+                    ],
+                    "billingMode": "PROVISIONED",
+                    "globalSecondaryIndexes": [],
+                    "hashKey": "ID",
+                    "id": "serverless-webapp-db-318783b",
+                    "localSecondaryIndexes": [],
+                    "name": "serverless-webapp-db-318783b",
+                    "pointInTimeRecovery": {
+                        "enabled": false
+                    },
+                    "rangeKey": "LatestGreetingTime",
+                    "readCapacity": 20,
+                    "replicas": [],
+                    "serverSideEncryption": null,
+                    "streamArn": "",
+                    "streamEnabled": false,
+                    "streamLabel": "",
+                    "streamViewType": "",
+                    "tags": {},
+                    "ttl": {
+                        "attributeName": "",
+                        "enabled": false
+                    },
+                    "writeCapacity": 20
+                },
+                "parent": "urn:pulumi:dev::aws-py-serverless-webapp::pulumi:pulumi:Stack::aws-py-serverless-webapp-dev",
+                "provider": "urn:pulumi:dev::aws-py-serverless-webapp::pulumi:providers:aws::default_3_10_1::9345827c-1b17-485d-ba33-7d754c81ac33",
+                "propertyDependencies": {
+                    "attributes": null,
+                    "billingMode": null,
+                    "hashKey": null,
+                    "rangeKey": null,
+                    "readCapacity": null,
+                    "writeCapacity": null
+                }            
+            }
+        ]
+    }
+}
