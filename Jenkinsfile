@@ -11,8 +11,7 @@ pipeline {
             steps {
                 nodejs(nodeJSInstallationName: "Node") {
                     withEnv(["PATH+PULUMI=C:/ProgramData/chocolatey/lib/pulumi/tools/Pulumi/bin"]) {
-                        bat "cd /program"
-                        bat "dir"
+                        bat "dir program"                        
                         bat "pulumi stack select ${PULUMI_STACK}"
                         bat "pulumi up --yes"
                     }
