@@ -15,7 +15,7 @@ jobs:
         with:
           args: up --yes
         env:
-          AWS_ACCESS_KEY_ID: AKIAYUAE22TSIMNKPZ5R
-          AWS_SECRET_ACCESS_KEY: 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
-          PULUMI_ACCESS_TOKEN: pul-ccb6cca5e41a514e35cd4f3e48f0b98d7bf67967
+          AWS_ACCESS_KEY_ID: "AKIAYUAE22TSIMNKPZ5R"
+          AWS_SECRET_ACCESS_KEY: "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"
+          PULUMI_ACCESS_TOKEN: "pul-ccb6cca5e41a514e35cd4f3e48f0b98d7bf67967"
           PULUMI_CI: up
