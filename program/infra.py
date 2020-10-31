@@ -41,7 +41,7 @@ lambda_fn = lambda_.Function('lambda_function',
    role=lambda_role.arn,
    runtime="python3.8",
    handler="lambda.lambda_handler",
-   timeout=30,
+   timeout=60,
    code=AssetArchive({
        '.': FileArchive('./lambda')
    })
