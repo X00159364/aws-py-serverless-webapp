@@ -12,7 +12,8 @@ jobs:
       - uses: docker://pulumi/actions
         with:
           # args: 'pip install -r requirements.txt'
-          args: -c "pip install -r program/requirements.txt && preview"
+          # args: -c "pip install -r program/requirements.txt && preview"
+          args: preview
         env:
           # AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           # AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
