@@ -226,7 +226,7 @@ dynamodb_table = dynamodb.Table("serverless-webapp-db",
     read_capacity=20,
     write_capacity=20)
 
-web_bucket = s3.Bucket('serverless-app-bucket', website={
+web_bucket = s3.Bucket('serverless-app-bucket2', website={
     "index_document": "index.html"
 })
 
