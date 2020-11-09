@@ -262,11 +262,12 @@ from pulumi import export
 #     policy=bucket_name.apply(public_read_policy_for_bucket))
 
 # Export the name of the bucket
-export('bucket_name',  infra.web_bucket.id)
-export('website_url', infra.web_bucket.website_endpoint)
-export('dynamodb_table.name',  infra.dynamodb_table.name)
-export('dynamodb_table.arn', infra.dynamodb_table.arn)
-export('serverless_api_url', infra.serverless_dep.invoke_url)
+# export('bucket_name',  infra.web_bucket.id)
+# export('website_url', infra.web_bucket.website_endpoint)
+export('DynamoDB Table Name',  infra.dynamodb_table.name)
+# export('dynamodb_table.arn', infra.dynamodb_table.arn)
+export('Lambda Function Name', infra.lambda_fn.name)
+export('API Gateway URL', infra.serverless_dep.invoke_url)
 
 
 # # UNIT TESTING

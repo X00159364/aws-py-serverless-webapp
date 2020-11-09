@@ -76,11 +76,6 @@ serverless_webapp_api = apigateway.RestApi("serverless_webapp_API",
         "types" : "REGIONAL"
     })
 
-# serverless_webapp_resource = apigateway.Resource("serverless_webapp_Resource",
-#     parent_id=serverless_webapp_api.root_resource_id,
-#     path_part="resource",
-#     rest_api=serverless_webapp_api.id)
-
 serverless_webapp_method = apigateway.Method("serverless_webapp_Method",
     authorization="NONE",
     http_method="POST",
@@ -138,32 +133,9 @@ options_response200 = apigateway.MethodResponse("options_response200",
     },
     )     
 
-# options_response200 = apigateway.MethodResponse("options_response200",    
-#     http_method=serverless_webapp_method.http_method,
-#     resource_id=serverless_webapp_api.root_resource_id,
-#     rest_api=serverless_webapp_api.id,
-#     response_models = {
-#         "application/json": "Empty"
-#     },    
-#     status_code="200",
-#     response_parameters={
-#         "method.response.header.Access-Control-Allow-Headers": True,
-#         "method.response.header.Access-Control-Allow-Methods": True,
-#         "method.response.header.Access-Control-Allow-Origin": True
-#     },
-#     ) 
-
 serverless_webapp_integration_response = apigateway.IntegrationResponse("serverless_webapp_IntegrationResponse",
     http_method=serverless_webapp_method.http_method,
     resource_id=serverless_webapp_api.root_resource_id,
-    # response_templates={
-    #     "application/xml": """#set($inputRoot = $input.path('$'))
-    #     <?xml version="1.0" encoding="UTF-8"?>
-    #     <message>
-    #         $inputRoot.body
-    #     </message>
-    #     """,
-    # },
     rest_api=serverless_webapp_api.id,
     status_code=response200.status_code,
     __opts__=ResourceOptions(depends_on=[lambda_fn]))
@@ -171,14 +143,6 @@ serverless_webapp_integration_response = apigateway.IntegrationResponse("serverl
 serverless_webapp_options_integration_response = apigateway.IntegrationResponse("serverless_webapp_options_IntegrationResponse",
     http_method=serverless_webapp_options_method.http_method,
     resource_id=serverless_webapp_api.root_resource_id,
-    # response_templates={
-    #     "application/xml": """#set($inputRoot = $input.path('$'))
-    #     <?xml version="1.0" encoding="UTF-8"?>
-    #     <message>
-    #         $inputRoot.body
-    #     </message>
-    #     """,
-    # },
     rest_api=serverless_webapp_api.id,
     status_code=options_response200.status_code,
     # status_code="200",
@@ -201,13 +165,6 @@ lambda_permission = lambda_.Permission(
     ),
     opts=ResourceOptions(depends_on=[lambda_fn, serverless_dep]),
 )
-
-# lambda_permission = lambda_.Permission("lambdaPermission",
-#     action="lambda:InvokeFunction",
-#     function=lambda_fn,
-#     principal="apigateway.amazonaws.com",
-#     source_arn=serverless_webapp_api.execution_arn.apply(lambda execution_arn: f"{execution_arn}/*/*/*"))
-
 
 dynamodb_table = dynamodb.Table("serverless-webapp-db",
     attributes=[
@@ -261,57 +218,3 @@ serverless_webapp_bucket_name = web_bucket.id
 bucket_policy = s3.BucketPolicy("bucket-policy",
     bucket=serverless_webapp_bucket_name,
     policy=serverless_webapp_bucket_name.apply(public_read_policy_for_bucket))
-
-# # UNIT TESTING
-# group = ec2.SecurityGroup('web-secgrp', ingress=[
-#     { "protocol": "tcp", "from_port": 80, "to_port": 80, "cidr_blocks": ["0.0.0.0/0"] },
-# ])
-
-# # user_data = '#!/bin/bash echo "Hello, World!" > index.html nohup python -m SimpleHTTPServer 80 &'
-
-# server = ec2.Instance('web-server-www;',
-#     instance_type="t2.micro",
-#     vpc_security_group_ids=[ group.id ], # reference the group object above
-#     ami="ami-892fe1fe",             # AMI for us-east-2 (Ohio)
-#     tags={'Name': 'webserver'})     # start a simple web server
-#     # __opts__=ResourceOptions(depends_on=[group]))           
-
-# # cfg = pulumi.Config()
-
-# # bucket_name = cfg.require("s3-bucket-name")
-
-# # required_tags = {
-# #     'CreatedBy': 'Pulumi',
-# #     'PulumiProject': pulumi.get_project(),
-# #     'PulumiStack': pulumi.get_stack(),
-# # }
-
-# # bucket = s3.Bucket(
-# #     resource_name=bucket_name,
-# #     acl="private",
-# #     force_destroy=True,
-# #     tags=required_tags
-# # )
-
-# # export('bucket_name', bucket.id)    
-
-# cfg = pulumi.Config()
-
-# # bucket_name = cfg.require("s3-bucket-name")
-# bucket_name = "Test"
-
-# required_tags = {
-#     'CreatedBy': 'Pulumi',
-#     'PulumiProject': pulumi.get_project(),
-#     'PulumiStack': pulumi.get_stack(),
-# }
-
-# bucket = s3.Bucket(
-#     resource_name=bucket_name,
-#     acl="private",
-#     force_destroy=True
-#     # tags=required_tags
-# )
-
-# # pulumi.export('dynamodb_table', dynamodb_table.name)
-# pulumi.export('bucket_name', bucket.id)
