@@ -1,88 +1,73 @@
-// Copyright 2016-2020, Pulumi Corporation.  All rights reserved.
-
-package examples
+package test
 
 import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
-	"path"
 	"strings"
 	"testing"
 	"time"
 
 	"github.com/pulumi/pulumi/pkg/v2/testing/integration"
-	// "github.com/pulumi/pulumi/pkg/testing/integration"	
+	// "github.com/pulumi/pulumi/pkg/testing/integration"
 	"github.com/stretchr/testify/assert"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/signer/v4"
 )
 
-func TestS3Website(t *testing.T) {
-	cwd, err := os.Getwd()
-	if err != nil {
-		t.FailNow()
+func TestDeployResources(t *testing.T) {
+	awsRegion := os.Getenv("AWS_REGION")
+	if awsRegion == "" {
+		awsRegion = "eu-west-1"
 	}
-
-	// Dir2:= path.Join(cwd, "")
-	// fmt.Println(Dir2)
-
-	test := integration.ProgramTestOptions{
-		Dir:         path.Join(cwd, "program"),		
+	cwd, _ := os.Getwd()	
+	integration.ProgramTest(t, &integration.ProgramTestOptions{
 		Quick:       true,
-		SkipRefresh: true,
+		SkipRefresh: true,		
+		Dir: cwd,
 		Config: map[string]string{
-			"aws:region": "eu-west-1",
+			"aws:region": awsRegion,
 		},
 		ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
-			assertHTTPResult(t, "http://"+stack.Outputs["websiteUrl"].(string), nil, func(body string) bool {
-				return assert.Contains(t, body, "Hello, Noel!")
-			})
-			// assertHTTPResult(t, "http://"+stack.Outputs["website_url"].(string), nil, func(body string) bool {
-			// 	return assert.Contains(t, body, "Serverless WebApp")
-			// })			
-		},
-	}
-	integration.ProgramTest(t, &test)
+			// maxWait := 10 * time.Minute
+			// maxWait := 1 * time.Minute
+			endpoint := stack.Outputs["serverless_api_url"].(string)
+			// assertHTTPResultWithRetry(t, endpoint, nil, maxWait, func(body string) bool {
+			// 	return assert.Contains(t, body, "Noel")			
+			// })
+			// Sample JSON document to be included as the request body
+			json := `{ "firstName": "Noel", "lastName": "Lowry" }`
+			body := strings.NewReader(json)
+			print(body)
+			// Get credentials from environment variables and create the AWS Signature Version 4 signer
+			credentials := credentials.NewEnvCredentials()
+			signer := v4.NewSigner(credentials)
+
+			// An HTTP client for sending the request
+			client := &http.Client{}
+
+			// Form the HTTP request
+			req, err := http.NewRequest(http.MethodPut, endpoint, body)
+			if err != nil {
+				fmt.Print(err)
+			}
+
+			// You can probably infer Content-Type programmatically, but here, we just say that it's JSON
+			req.Header.Add("Content-Type", "application/json")
+
+			// Sign the request, send it, and print the response
+			signer.Sign(req, body, "apigateway", awsRegion, time.Now())
+			resp, err := client.Do(req)
+			if err != nil {
+				fmt.Print(err)
+			}
+			fmt.Print(resp.Status + "\n")	
+			assert.Contains(t, body, "Noel")			
+		},		
+	})
 }
 
-// func TestS3Website_TEST(t *testing.T) {
-// 	cwd, err := os.Getwd()
-// 	if err != nil {
-// 		t.FailNow()
-// 	}
-
-// 	// Dir2:= path.Join(cwd, "")
-// 	// fmt.Println(Dir2)
-// 	integration.ProgramTest(t, &integration.ProgramTestOptions{
-// 		// as before...
-// 		ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {	
-// 			var foundBuckets int		
-// 			for _, res := range stack.Deployment.Resources {			
-// 				if res.Type == "aws:s3/bucket:Bucket" {						
-// 					foundBuckets++
-// 				}
-// 			}		
-// 		    assert.Equal(t, 1, foundBuckets, "Expected to find a single AWS S3 Bucket")
-// 		},
-// 	})
-// 	integration.ProgramTest(t, &test2)
-// }
-
-// func TestExamples(t *testing.T) {
-//     awsRegion := os.Getenv("AWS_REGION")
-//     if awsRegion == "" {
-//         awsRegion = "eu-west-1"
-//     }
-//     cwd, _ := os.Getwd()
-//     integration.ProgramTest(t, &integration.ProgramTestOptions{
-//         Quick:       true,
-//         SkipRefresh: true,
-// 		Dir:         path.Join(cwd, "program"),
-//         Config: map[string]string{
-//             "aws:region": awsRegion,
-//         },
-//     })
-// }
 
 func assertHTTPResult(t *testing.T, output interface{}, headers map[string]string, check func(string) bool) bool {
 	return assertHTTPResultWithRetry(t, output, headers, 5*time.Minute, check)
@@ -92,22 +77,25 @@ func assertHTTPResultWithRetry(t *testing.T, output interface{}, headers map[str
 	return assertHTTPResultShapeWithRetry(t, output, headers, maxWait, func(string) bool { return true }, check)
 }
 
+// assertHTTPResultWithRetry(					t, 		endpoint, 				nil, 				maxWait, func(body string) bool {
 func assertHTTPResultShapeWithRetry(t *testing.T, output interface{}, headers map[string]string, maxWait time.Duration,
 	ready func(string) bool, check func(string) bool) bool {
 	hostname, ok := output.(string)
+	print(hostname)
 	if !assert.True(t, ok, fmt.Sprintf("expected `%s` output", output)) {
 		return false
 	}
 
-	if !(strings.HasPrefix(hostname, "http://") || strings.HasPrefix(hostname, "https://")) {
-		hostname = fmt.Sprintf("http://%s", hostname)
-	}
+	hostname = hostname
+	// if !(strings.HasPrefix(hostname, "http://") || strings.HasPrefix(hostname, "https://")) {
+	// 	hostname = fmt.Sprintf("http://%s", hostname)
+	// }
 
 	startTime := time.Now()
 	count, sleep := 0, 0
 	for {
 		now := time.Now()
-		req, err := http.NewRequest("GET", hostname, nil)
+		req, err := http.NewRequest("POST", hostname, nil)
 		if !assert.NoError(t, err) {
 			return false
 		}

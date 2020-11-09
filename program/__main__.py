@@ -266,7 +266,8 @@ export('bucket_name',  infra.web_bucket.id)
 export('website_url', infra.web_bucket.website_endpoint)
 export('dynamodb_table.name',  infra.dynamodb_table.name)
 export('dynamodb_table.arn', infra.dynamodb_table.arn)
-export('serverless_webapp_api.execution_arn', infra.serverless_webapp_api.execution_arn)
+export('serverless_api_url', infra.serverless_dep.invoke_url)
+
 
 # # UNIT TESTING
 # group = ec2.SecurityGroup('web-secgrp', ingress=[

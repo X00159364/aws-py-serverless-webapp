@@ -1,5 +1,5 @@
 name: aws-py-serverless-webapp
-description: A Pulumi program that demonstrates creating various AWS resources in PYthon
+description: Pulumi serverless web application
 runtime: python
 template:
   config:

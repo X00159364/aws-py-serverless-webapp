@@ -41,7 +41,7 @@ lambda_fn = lambda_.Function('lambda_function',
    role=lambda_role.arn,
    runtime="python3.8",
    handler="lambda.lambda_handler",
-   timeout=60,
+   timeout=20,
    code=AssetArchive({
        '.': FileArchive('./lambda')
    })
@@ -71,7 +71,7 @@ dynamo_role_policy = iam.RolePolicy('dynamoRolePolicy',
 )
 
 serverless_webapp_api = apigateway.RestApi("serverless_webapp_API", 
-    description="This is my API for demonstration purposes",
+    description="API for serverless web application",
         endpoint_configuration = {
         "types" : "REGIONAL"
     })
@@ -184,7 +184,7 @@ serverless_webapp_options_integration_response = apigateway.IntegrationResponse(
     # status_code="200",
     __opts__=ResourceOptions(depends_on=[lambda_fn]))
 
-example_dep = apigateway.Deployment(
+serverless_dep = apigateway.Deployment(
     'example',
     rest_api=serverless_webapp_api,
     stage_name="dev",
@@ -199,7 +199,7 @@ lambda_permission = lambda_.Permission(
     source_arn=serverless_webapp_api.execution_arn.apply(
         lambda execution_arn: f"{execution_arn}/*/*/*"
     ),
-    opts=ResourceOptions(depends_on=[lambda_fn, example_dep]),
+    opts=ResourceOptions(depends_on=[lambda_fn, serverless_dep]),
 )
 
 # lambda_permission = lambda_.Permission("lambdaPermission",
@@ -226,9 +226,11 @@ dynamodb_table = dynamodb.Table("serverless-webapp-db",
     read_capacity=20,
     write_capacity=20)
 
-web_bucket = s3.Bucket('serverless-app-bucket', website={
-    "index_document": "index.html"
-})
+web_bucket = s3.Bucket('serverless-app-bucket', 
+    website={
+        "index_document": "index.html"
+    }
+)
 
 content_dir = "www"
 for file in os.listdir(content_dir):
@@ -260,22 +262,43 @@ bucket_policy = s3.BucketPolicy("bucket-policy",
     bucket=serverless_webapp_bucket_name,
     policy=serverless_webapp_bucket_name.apply(public_read_policy_for_bucket))
 
-# UNIT TESTING
-group = ec2.SecurityGroup('web-secgrp', ingress=[
-    { "protocol": "tcp", "from_port": 80, "to_port": 80, "cidr_blocks": ["0.0.0.0/0"] },
-])
+# # UNIT TESTING
+# group = ec2.SecurityGroup('web-secgrp', ingress=[
+#     { "protocol": "tcp", "from_port": 80, "to_port": 80, "cidr_blocks": ["0.0.0.0/0"] },
+# ])
 
-# user_data = '#!/bin/bash echo "Hello, World!" > index.html nohup python -m SimpleHTTPServer 80 &'
+# # user_data = '#!/bin/bash echo "Hello, World!" > index.html nohup python -m SimpleHTTPServer 80 &'
 
-server = ec2.Instance('web-server-www;',
-    instance_type="t2.micro",
-    security_groups=[ group.name ], # reference the group object above
-    ami="ami-892fe1fe",             # AMI for us-east-2 (Ohio)
-    tags={'Name': 'webserver'})            # start a simple web server
+# server = ec2.Instance('web-server-www;',
+#     instance_type="t2.micro",
+#     vpc_security_group_ids=[ group.id ], # reference the group object above
+#     ami="ami-892fe1fe",             # AMI for us-east-2 (Ohio)
+#     tags={'Name': 'webserver'})     # start a simple web server
+#     # __opts__=ResourceOptions(depends_on=[group]))           
+
+# # cfg = pulumi.Config()
+
+# # bucket_name = cfg.require("s3-bucket-name")
+
+# # required_tags = {
+# #     'CreatedBy': 'Pulumi',
+# #     'PulumiProject': pulumi.get_project(),
+# #     'PulumiStack': pulumi.get_stack(),
+# # }
+
+# # bucket = s3.Bucket(
+# #     resource_name=bucket_name,
+# #     acl="private",
+# #     force_destroy=True,
+# #     tags=required_tags
+# # )
+
+# # export('bucket_name', bucket.id)    
 
 # cfg = pulumi.Config()
 
-# bucket_name = cfg.require("s3-bucket-name")
+# # bucket_name = cfg.require("s3-bucket-name")
+# bucket_name = "Test"
 
 # required_tags = {
 #     'CreatedBy': 'Pulumi',
@@ -286,28 +309,9 @@ server = ec2.Instance('web-server-www;',
 # bucket = s3.Bucket(
 #     resource_name=bucket_name,
 #     acl="private",
-#     force_destroy=True,
-#     tags=required_tags
+#     force_destroy=True
+#     # tags=required_tags
 # )
 
-# export('bucket_name', bucket.id)    
-
-cfg = pulumi.Config()
-
-# bucket_name = cfg.require("s3-bucket-name")
-bucket_name = "Test"
-
-required_tags = {
-    'CreatedBy': 'Pulumi',
-    'PulumiProject': pulumi.get_project(),
-    'PulumiStack': pulumi.get_stack(),
-}
-
-bucket = s3.Bucket(
-    resource_name=bucket_name,
-    acl="private",
-    force_destroy=True
-    # tags=required_tags
-)
-
-pulumi.export('bucket_name', bucket.id)
+# # pulumi.export('dynamodb_table', dynamodb_table.name)
+# pulumi.export('bucket_name', bucket.id)
