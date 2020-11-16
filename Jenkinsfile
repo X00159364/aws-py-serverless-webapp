@@ -20,10 +20,9 @@ pipeline {
         
         stage ("Unit Testing") {
             steps {    
-                    dir("program"){
-                        bat "python -m unittest infra_unittest.py"                    
-                    }                    
-                }
+                dir("program"){
+                    bat "python -m unittest infra_unittest.py"                    
+                }                                    
             }
         }
 
