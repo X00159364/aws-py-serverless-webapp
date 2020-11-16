@@ -23,7 +23,7 @@ pipeline {
                 dir("program"){
                     bat "python -m unittest infra_unittest.py"                    
                 }                                    
-            }
+            } 
         }
 
         // stage ("Pulumi Destroy") {
