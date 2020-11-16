@@ -18,17 +18,26 @@ pipeline {
             }
         }
         
-        stage ("Pulumi Destroy") {
-            steps {
-                nodejs(nodeJSInstallationName: "Node") {
-                    withEnv(["PATH+PULUMI=C:/ProgramData/chocolatey/lib/pulumi/tools/Pulumi/bin"]) {
-                        sleep(60)
-                        bat "pulumi stack select ${PULUMI_STACK}"
-                        bat "pulumi destroy --yes"
-                    }
+        stage ("Unit Testing") {
+            steps {    
+                    dir("program"){
+                        bat "python -m unittest infra_unittest.py"                    
+                    }                    
                 }
             }
         }
+
+        // stage ("Pulumi Destroy") {
+        //     steps {
+        //         nodejs(nodeJSInstallationName: "Node") {
+        //             withEnv(["PATH+PULUMI=C:/ProgramData/chocolatey/lib/pulumi/tools/Pulumi/bin"]) {
+        //                 sleep(60)
+        //                 bat "pulumi stack select ${PULUMI_STACK}"
+        //                 bat "pulumi destroy --yes"
+        //             }
+        //         }
+        //     }
+        // }
     }
     post {
         // failure{
