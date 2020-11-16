@@ -21,7 +21,7 @@ class TestingWithMocks(unittest.TestCase):
             print(urn)
             print(timeout)            
             self.assertIsNotNone(timeout, f'lambda {urn} must have timeout')
-            self.assertLessEqual(timeout,10,f'lambda {urn} must have a timeout less than or equal to 10')                
+            self.assertGreaterEqual(timeout,10,f'lambda {urn} must have a timeout than than or equal to 10')                
         return pulumi.Output.all(infra.lambda_fn.urn, infra.lambda_fn.timeout).apply(check_timeout)
 
 #     # # check 1: Instances have a Name tag.
